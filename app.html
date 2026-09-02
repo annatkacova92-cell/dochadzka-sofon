@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dochádzka Sofon</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div>
+        <h1>Dochádzka — Sofon Lab</h1>
+        <p class="subtitle" style="margin:0;">Max. 30 hod. / mesiac na osobu</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="who">Prihlásený ako <strong id="whoName">…</strong></div>
+        <button class="btn secondary small" id="logoutBtn" type="button" style="margin-top:6px;">Odhlásiť sa</button>
+      </div>
+    </header>
+
+    <div class="tabs" id="tabs" hidden>
+      <button id="tabMine" class="active" type="button">Moja dochádzka</button>
+      <button id="tabAdmin" type="button">Prehľad tímu (admin)</button>
+    </div>
+
+    <!-- MOJA DOCHADZKA -->
+    <div id="mineView">
+      <div class="month-nav">
+        <button id="prevMonthMine" type="button" aria-label="Predchádzajúci mesiac">‹</button>
+        <div class="month-label" id="monthLabelMine">—</div>
+        <button id="nextMonthMine" type="button" aria-label="Nasledujúci mesiac">›</button>
+      </div>
+
+      <div class="card">
+        <h2>Môj mesačný súčet</h2>
+        <div class="people-grid" id="myTotalGrid">
+          <div class="empty-note">Zatiaľ žiadne záznamy.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Pridať záznam</h2>
+        <form class="entry-form" id="entryForm">
+          <div class="field">
+            <label for="dateInput">Dátum</label>
+            <input id="dateInput" type="date" required />
+          </div>
+          <div class="field">
+            <label for="hoursInput">Hodiny</label>
+            <input id="hoursInput" type="number" min="0.5" max="24" step="0.5" placeholder="napr. 4" required />
+          </div>
+          <div class="field">
+            <label for="typeInput">Typ aktivity</label>
+            <select id="typeInput" required>
+              <option value="">Vyber...</option>
+              <option>Sofon Meeting</option>
+              <option>Práca v Jarvisovi</option>
+              <option>Research</option>
+              <option>Iné</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="noteInput">Poznámka <span id="noteHint" class="hint" style="display:inline;"></span></label>
+            <input id="noteInput" type="text" placeholder="nepovinné" />
+          </div>
+          <button class="btn" id="addBtn" type="submit">Pridať</button>
+        </form>
+        <div class="status-line" id="statusLine"></div>
+      </div>
+
+      <div class="card">
+        <h2>Moje záznamy za mesiac</h2>
+        <table>
+          <thead>
+            <tr><th>Dátum</th><th>Hodiny</th><th>Typ</th><th>Poznámka</th><th></th></tr>
+          </thead>
+          <tbody id="myEntriesBody">
+            <tr><td colspan="5" class="empty-note">Zatiaľ žiadne záznamy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADMIN VIEW -->
+    <div id="adminView" hidden>
+      <div class="month-nav">
+        <button id="prevMonthAdmin" type="button" aria-label="Predchádzajúci mesiac">‹</button>
+        <div class="month-label" id="monthLabelAdmin">—</div>
+        <button id="nextMonthAdmin" type="button" aria-label="Nasledujúci mesiac">›</button>
+      </div>
+
+      <div class="card">
+        <h2>Prehľad za mesiac — celý tím</h2>
+        <div class="people-grid" id="teamGrid">
+          <div class="empty-note">Zatiaľ žiadne záznamy.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Všetky záznamy za mesiac</h2>
+        <div class="filter-row">
+          <select id="personFilter">
+            <option value="">Všetci</option>
+          </select>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Dátum</th><th>Meno</th><th>Hodiny</th><th>Typ</th><th>Poznámka</th></tr>
+          </thead>
+          <tbody id="teamEntriesBody">
+            <tr><td colspan="5" class="empty-note">Zatiaľ žiadne záznamy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/member.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

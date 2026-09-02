@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dochádzka Sofon — prihlásenie</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="center-wrap">
+    <div class="card auth-card">
+      <h1>Dochádzka — Sofon Lab</h1>
+      <p class="subtitle">Prihlás sa svojím súkromným e-mailom.</p>
+
+      <div class="toggle-row">
+        <button id="tabLogin" class="active" type="button">Prihlásiť sa</button>
+        <button id="tabSignup" type="button">Registrovať sa</button>
+      </div>
+
+      <form id="authForm">
+        <div class="field" id="nameField" hidden>
+          <label for="nameInput">Meno</label>
+          <input id="nameInput" type="text" placeholder="Tvoje meno a priezvisko" />
+        </div>
+        <div class="field">
+          <label for="emailInput">E-mail</label>
+          <input id="emailInput" type="email" required placeholder="tvoj@email.sk" />
+        </div>
+        <div class="field">
+          <label for="passwordInput">Heslo</label>
+          <input id="passwordInput" type="password" required minlength="6" placeholder="min. 6 znakov" />
+        </div>
+        <button class="btn full" id="submitBtn" type="submit">Prihlásiť sa</button>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="status-line" id="statusMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
