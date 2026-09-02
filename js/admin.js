@@ -101,32 +101,15 @@
 
   document.getElementById("exportBtn").addEventListener("click", () => {
     const { year, month } = APP.view.admin;
-    const monthLabelText = MONTH_NAMES[month] + " " + year;
 
-    // Sheet 1: súhrn za osobu
-    const totals = {};
-    teamEntries.forEach(e => {
-      totals[e.user_id] = (totals[e.user_id] || 0) + Number(e.hours || 0);
-    });
-    const allIds = Array.from(new Set([...Object.keys(profilesById), ...Object.keys(totals)]));
-    const sortedIds = allIds.sort((a, b) => (profilesById[a] || "").localeCompare(profilesById[b] || ""));
-
-    const summaryRows = sortedIds.map(id => {
-      const hrs = totals[id] || 0;
-      return {
-        "Meno": profilesById[id] || "(neznámy)",
-        "Odpracované hodiny": Number(hrs.toFixed(2)),
-        "Limit (h)": APP.monthlyCap,
-        "Zostáva (h)": Number((APP.monthlyCap - hrs).toFixed(2)),
-        "Stav": hrs > APP.monthlyCap ? "Prekročené" : "OK",
-      };
-    });
-
-    // Sheet 2: všetky záznamy
-    const sorted = teamEntries.slice().sort((a, b) => {
+    // Presne to isté, čo je zobrazené v tabuľke (rešpektuje aj aktuálny filter osoby)
+    const filterId = personFilter.value;
+    const filtered = filterId ? teamEntries.filter(e => e.user_id === filterId) : teamEntries;
+    const sorted = filtered.slice().sort((a, b) => {
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
       return (profilesById[a.user_id] || "").localeCompare(profilesById[b.user_id] || "");
     });
+
     const entryRows = sorted.map(e => ({
       "Dátum": e.date,
       "Meno": profilesById[e.user_id] || "(neznámy)",
@@ -135,11 +118,27 @@
       "Poznámka": e.note || "",
     }));
 
+    const ws = XLSX.utils.json_to_sheet(entryRows);
+
+    // Súhrn hodín na konci
+    const totals = {};
+    sorted.forEach(e => {
+      totals[e.user_id] = (totals[e.user_id] || 0) + Number(e.hours || 0);
+    });
+    const totalIds = Object.keys(totals).sort((a, b) => (profilesById[a] || "").localeCompare(profilesById[b] || ""));
+    const grandTotal = Object.values(totals).reduce((sum, h) => sum + h, 0);
+
+    const summaryAoa = [
+      [],
+      ["Súhrn hodín"],
+      ...totalIds.map(id => [profilesById[id] || "(neznámy)", Number(totals[id].toFixed(2))]),
+      [],
+      ["Spolu", Number(grandTotal.toFixed(2))],
+    ];
+    XLSX.utils.sheet_add_aoa(ws, summaryAoa, { origin: -1 });
+
     const wb = XLSX.utils.book_new();
-    const summarySheet = XLSX.utils.json_to_sheet(summaryRows);
-    const entriesSheet = XLSX.utils.json_to_sheet(entryRows);
-    XLSX.utils.book_append_sheet(wb, summarySheet, "Súhrn");
-    XLSX.utils.book_append_sheet(wb, entriesSheet, "Záznamy");
+    XLSX.utils.book_append_sheet(wb, ws, "Dochádzka");
 
     const fileName = `Dochadzka_Sofon_${year}-${String(month + 1).padStart(2, "0")}.xlsx`;
     XLSX.writeFile(wb, fileName);
