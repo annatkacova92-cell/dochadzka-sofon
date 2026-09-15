@@ -118,6 +118,8 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: 
 
 .error-msg { color: var(--bad); font-size: 13px; margin-top: 10px; min-height: 16px; }
 .status-line { color: var(--text-muted); font-size: 13px; margin-top: 8px; min-height: 16px; }
+.status-line a { color: var(--accent-2); text-decoration: none; }
+.status-line a:hover { text-decoration: underline; }
 
 header.topbar {
   display: flex;
