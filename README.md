@@ -11,15 +11,17 @@ Technológie: obyčajné HTML/CSS/JS (žiadny build krok) + [Supabase](https://s
 ## Čo obsahuje
 
 ```
-index.html          — prihlásenie / registrácia
-app.html            — appka (moja dochádzka + admin prehľad)
-css/style.css        — vzhľad
-js/supabaseClient.js — sem vložíš svoje Supabase údaje (krok 2)
-js/auth.js            — logika prihlásenia
-js/shared.js          — spoločné funkcie
-js/member.js          — pohľad bežného člena
-js/admin.js           — pohľad admina (teba)
-sql/schema.sql         — databázová schéma + pravidlá prístupu (spusti v kroku 2)
+index.html            — prihlásenie / registrácia
+app.html              — appka (moja dochádzka + admin prehľad)
+reset-password.html   — nastavenie nového hesla (odkaz z e-mailu vedie sem)
+css/style.css          — vzhľad
+js/supabaseClient.js   — sem vložíš svoje Supabase údaje (krok 2)
+js/auth.js              — logika prihlásenia + „Zabudol/a som heslo"
+js/reset-password.js    — logika nastavenia nového hesla
+js/shared.js            — spoločné funkcie
+js/member.js            — pohľad bežného člena
+js/admin.js             — pohľad admina (teba)
+sql/schema.sql           — databázová schéma + pravidlá prístupu (spusti v kroku 2)
 ```
 
 ## Krok 1 — vytvor si Supabase účet a projekt (zadarmo)
@@ -65,7 +67,10 @@ sql/schema.sql         — databázová schéma + pravidlá prístupu (spusti v 
 1. Späť v Supabase: **Authentication → URL Configuration**.
 2. Do **Site URL** vlož presnú adresu appky z kroku 4 (napr.
    `https://anna.github.io/dochadzka-sofon/`).
-3. Ulož. (Toto je dôležité, inak potvrdzovacie e-maily pri registrácii budú smerovať na
+3. V sekcii **Redirect URLs** pridaj aj adresu stránky na obnovenie hesla, napr.
+   `https://anna.github.io/dochadzka-sofon/reset-password.html` (bez tohto kroku bude
+   odkaz „Zabudol/a som heslo" v e-maile presmerúvať na zlú adresu).
+4. Ulož. (Toto je dôležité, inak potvrdzovacie a resetovacie e-maily budú smerovať na
    zlú adresu.)
 
 ## Krok 6 — zaregistruj sa a nastav sa ako admin
@@ -89,6 +94,10 @@ appka vyžaduje aj krátku poznámku, o čo išlo) a nepovinnú poznámku. Vidia
 záznamy. Ty ako admin vidíš dochádzku všetkých, s mesačným prehľadom a farebným
 upozornením pri prekročení 30-hodinového limitu.
 
+Ak si niekto zabudne heslo, na prihlasovacej stránke klikne na „Zabudol/a som heslo"
+(zadá si najprv svoj e-mail do poľa vyššie), príde mu e-mail s odkazom na
+`reset-password.html`, kde si nastaví nové heslo.
+
 ## Ak niečo nefunguje
 
 - **Registrácia/prihlásenie nič nerobí** → skontroluj, či si správne vložil URL a anon
@@ -97,3 +106,7 @@ upozornením pri prekročení 30-hodinového limitu.
 - **Nevidím tab admina** → over si v Supabase (Table Editor → `profiles`), či máš pri
   svojom riadku `role = admin`.
 - **Chcem zmeniť limit 30 hodín** → v `js/shared.js` uprav riadok `monthlyCap: 30`.
+- **„Zabudol/a som heslo" nefunguje / odkaz z e-mailu je neplatný** → skontroluj v
+  Supabase (Authentication → URL Configuration), že máš v **Redirect URLs** pridanú
+  presnú adresu `.../reset-password.html` (krok 5). Odkaz v e-maile platí len obmedzený
+  čas — ak vypršal, treba si vyžiadať nový.
