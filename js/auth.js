@@ -11,6 +11,8 @@
   const errorMsg = document.getElementById("errorMsg");
   const statusMsg = document.getElementById("statusMsg");
   const form = document.getElementById("authForm");
+  const forgotRow = document.getElementById("forgotRow");
+  const forgotLink = document.getElementById("forgotLink");
 
   function setMode(newMode) {
     mode = newMode;
@@ -20,6 +22,7 @@
     nameField.hidden = !isSignup;
     nameInput.required = isSignup;
     submitBtn.textContent = isSignup ? "Zaregistrovať sa" : "Prihlásiť sa";
+    forgotRow.hidden = isSignup;
     errorMsg.textContent = "";
     statusMsg.textContent = "";
   }
@@ -80,6 +83,36 @@
     if (/invalid login credentials/i.test(msg)) return "Nesprávny e-mail alebo heslo.";
     if (/user already registered/i.test(msg)) return "Tento e-mail je už zaregistrovaný — skús sa prihlásiť.";
     if (/password should be at least/i.test(msg)) return "Heslo musí mať aspoň 6 znakov.";
+    if (/rate limit/i.test(msg)) return "Príliš veľa pokusov. Skús to o chvíľu znova.";
     return msg;
   }
+
+  forgotLink.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    errorMsg.textContent = "";
+    statusMsg.textContent = "";
+
+    const email = emailInput.value.trim();
+    if (!email) {
+      errorMsg.textContent = "Najprv zadaj svoj e-mail vyššie.";
+      return;
+    }
+
+    const originalText = forgotLink.textContent;
+    forgotLink.textContent = "Odosielam...";
+
+    // Funguje aj na .../dochadzka-sofon/ aj na .../dochadzka-sofon/index.html
+    const basePath = window.location.pathname.replace(/index\.html$/, "");
+    const redirectTo = window.location.origin + basePath + "reset-password.html";
+
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+
+    forgotLink.textContent = originalText;
+
+    if (error) {
+      errorMsg.textContent = translateError(error.message || String(error));
+      return;
+    }
+    statusMsg.textContent = "Ak je tento e-mail zaregistrovaný, poslali sme naň odkaz na obnovenie hesla. Skontroluj aj spam.";
+  });
 })();
